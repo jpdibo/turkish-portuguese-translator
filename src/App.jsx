@@ -41,10 +41,12 @@ function App() {
   const fetchWords = async (level, source, target) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/words?level=${level}&source=${source}&target=${target}&count=5`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/words?level=${level}&source=${source}&target=${target}&count=5`);
       const data = await response.json();
       setWords(data.words || []);
     } catch (err) {
+      console.error('Error fetching words:', err);
       setWords([]);
     } finally {
       setLoading(false);
