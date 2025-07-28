@@ -67,6 +67,31 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Setup endpoint to initialize database
+app.get('/setup', async (req, res) => {
+  try {
+    const { initializeDatabase, importWords } = require('./database');
+    
+    console.log('Initializing database...');
+    await initializeDatabase();
+    
+    console.log('Importing words...');
+    const count = await importWords();
+    
+    res.json({
+      success: true,
+      message: `Database setup complete! Imported ${count} words.`,
+      count: count
+    });
+  } catch (error) {
+    console.error('Setup error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/words', wordsRoutes);
