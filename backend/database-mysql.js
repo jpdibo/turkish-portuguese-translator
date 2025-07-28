@@ -55,13 +55,39 @@ async function initializeDatabase() {
     `);
 
     await connection.execute(`
-      CREATE TABLE IF NOT EXISTS translations (
+      CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        source_word_id INT,
-        target_word_id INT,
-        FOREIGN KEY (source_word_id) REFERENCES words (id),
-        FOREIGN KEY (target_word_id) REFERENCES words (id),
-        UNIQUE KEY unique_translation (source_word_id, target_word_id)
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS user_preferences (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        source_language VARCHAR(10) DEFAULT 'tr',
+        target_language VARCHAR(10) DEFAULT 'pt',
+        difficulty_level VARCHAR(20) DEFAULT 'beginner',
+        words_per_day INT DEFAULT 5,
+        is_email_subscribed BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    `);
+
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS user_word_progress (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        word_id INT,
+        mastery_level INT DEFAULT 0,
+        last_reviewed TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (word_id) REFERENCES words (id),
+        UNIQUE KEY unique_user_word (user_id, word_id)
       )
     `);
 
@@ -97,23 +123,20 @@ async function importWords() {
     for (const entry of wordsData) {
       // Insert word
       const [result] = await connection.execute(
-        `INSERT IGNORE INTO words (turkish_word, portuguese_word, english_word, language_id, difficulty_level) 
-         VALUES (?, ?, ?, ?, ?)`,
+        'INSERT IGNORE INTO words (turkish_word, portuguese_word, english_word, language_id, difficulty_level) VALUES (?, ?, ?, ?, ?)',
         [entry.tr.word, entry.pt.word, entry.en.word, 1, entry.difficulty || 1]
       );
       
-      const wordId = result.insertId;
-      
-      // Insert examples if they exist
-      if (entry.tr.example || entry.pt.example || entry.en.example) {
-        await connection.execute(
-          `INSERT IGNORE INTO word_examples (word_id, turkish_example, portuguese_example, english_example) 
-           VALUES (?, ?, ?, ?)`,
-          [wordId, entry.tr.example, entry.pt.example, entry.en.example]
-        );
+      if (result.insertId) {
+        // Insert examples if they exist
+        if (entry.tr.example || entry.pt.example || entry.en.example) {
+          await connection.execute(
+            'INSERT IGNORE INTO word_examples (word_id, turkish_example, portuguese_example, english_example) VALUES (?, ?, ?, ?)',
+            [result.insertId, entry.tr.example, entry.pt.example, entry.en.example]
+          );
+        }
+        imported++;
       }
-      
-      imported++;
     }
     
     connection.release();

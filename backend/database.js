@@ -2,8 +2,10 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-// Create database file in the backend directory
-const dbPath = path.join(__dirname, 'dictionary.db');
+// Create database file in a persistent directory
+const dbPath = process.env.NODE_ENV === 'production' 
+  ? path.join(process.env.HOME || process.env.USERPROFILE || '/tmp', 'dictionary.db')
+  : path.join(__dirname, 'dictionary.db');
 
 // Initialize database
 function initializeDatabase() {
@@ -117,7 +119,32 @@ function getDatabase() {
 async function importWords() {
   try {
     const db = await getDatabase();
-    const wordsData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'words_to_import.json'), 'utf8'));
+    
+    // Try different possible paths for the words file
+    let wordsData;
+    const possiblePaths = [
+      path.join(__dirname, '..', 'words_to_import.json'),
+      path.join(__dirname, 'words_to_import.json'),
+      path.join(process.cwd(), 'words_to_import.json'),
+      path.join(process.cwd(), 'backend', 'words_to_import.json')
+    ];
+    
+    let fileFound = false;
+    for (const filePath of possiblePaths) {
+      try {
+        console.log(`Trying to read words from: ${filePath}`);
+        wordsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        console.log(`Successfully read words from: ${filePath}`);
+        fileFound = true;
+        break;
+      } catch (err) {
+        console.log(`Could not read from ${filePath}: ${err.message}`);
+      }
+    }
+    
+    if (!fileFound) {
+      throw new Error('Could not find words_to_import.json in any expected location');
+    }
     
     return new Promise((resolve, reject) => {
       db.serialize(() => {
