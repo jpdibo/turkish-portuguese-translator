@@ -1,0 +1,227 @@
+2025-07-15 22:41:36.542 BST [5824] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-15 22:41:36.550 BST [5824] LOG:  could not bind IPv6 address "::1": Permission denied
+2025-07-15 22:41:36.550 BST [5824] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2025-07-15 22:41:36.550 BST [5824] WARNING:  could not create listen socket for "localhost"
+2025-07-15 22:41:36.550 BST [5824] FATAL:  could not create any TCP/IP sockets
+2025-07-15 22:41:36.555 BST [5824] LOG:  database system is shut down
+2025-07-15 22:42:13.679 BST [45120] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-15 22:42:13.688 BST [45120] LOG:  could not bind IPv6 address "::1": Permission denied
+2025-07-15 22:42:13.689 BST [45120] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2025-07-15 22:42:13.689 BST [45120] WARNING:  could not create listen socket for "localhost"
+2025-07-15 22:42:13.689 BST [45120] FATAL:  could not create any TCP/IP sockets
+2025-07-15 22:42:13.695 BST [45120] LOG:  database system is shut down
+2025-07-15 22:57:06.399 BST [37636] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-15 22:57:06.406 BST [37636] LOG:  listening on IPv6 address "::1", port 5432
+2025-07-15 22:57:06.406 BST [37636] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-07-15 22:57:06.502 BST [26380] LOG:  database system was shut down at 2025-07-15 22:41:04 BST
+2025-07-15 22:57:06.551 BST [37636] LOG:  database system is ready to accept connections
+2025-07-15 23:01:32.977 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:32.977 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS languages (
+	    id SERIAL PRIMARY KEY,
+	    code VARCHAR(5) UNIQUE NOT NULL,
+	    name VARCHAR(50) NOT NULL,
+	    native_name VARCHAR(50) NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:32.992 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:32.992 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS users (
+	    id SERIAL PRIMARY KEY,
+	    email VARCHAR(255) UNIQUE NOT NULL,
+	    password_hash VARCHAR(255) NOT NULL,
+	    first_name VARCHAR(100),
+	    last_name VARCHAR(100),
+	    is_active BOOLEAN DEFAULT TRUE,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.008 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.008 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS word_categories (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(100) NOT NULL,
+	    description TEXT,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.025 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.025 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS words (
+	    id SERIAL PRIMARY KEY,
+	    turkish_word VARCHAR(255) NOT NULL,
+	    portuguese_word VARCHAR(255) NOT NULL,
+	    turkish_pronunciation VARCHAR(255),
+	    portuguese_pronunciation VARCHAR(255),
+	    difficulty_level INTEGER CHECK (difficulty_level BETWEEN 1 AND 5),
+	    category_id INTEGER REFERENCES word_categories(id),
+	    part_of_speech VARCHAR(50),
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.041 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.041 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS word_examples (
+	    id SERIAL PRIMARY KEY,
+	    word_id INTEGER REFERENCES words(id) ON DELETE CASCADE,
+	    turkish_example TEXT NOT NULL,
+	    portuguese_example TEXT NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.057 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.057 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS user_progress (
+	    id SERIAL PRIMARY KEY,
+	    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	    word_id INTEGER REFERENCES words(id) ON DELETE CASCADE,
+	    mastery_level INTEGER DEFAULT 0 CHECK (mastery_level BETWEEN 0 AND 5),
+	    last_reviewed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    review_count INTEGER DEFAULT 0,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    UNIQUE(user_id, word_id)
+	);
+2025-07-15 23:01:33.073 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.073 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS email_subscriptions (
+	    id SERIAL PRIMARY KEY,
+	    email VARCHAR(255) UNIQUE NOT NULL,
+	    is_active BOOLEAN DEFAULT TRUE,
+	    subscription_type VARCHAR(50) DEFAULT 'daily',
+	    preferred_difficulty_level INTEGER DEFAULT 1,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.092 BST [51596] ERROR:  permission denied for schema public at character 28
+2025-07-15 23:01:33.092 BST [51596] STATEMENT:  CREATE TABLE IF NOT EXISTS email_queue (
+	    id SERIAL PRIMARY KEY,
+	    subscription_id INTEGER REFERENCES email_subscriptions(id) ON DELETE CASCADE,
+	    subject VARCHAR(255) NOT NULL,
+	    content TEXT NOT NULL,
+	    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'failed')),
+	    sent_at TIMESTAMP,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-07-15 23:01:33.107 BST [51596] ERROR:  relation "words" does not exist
+2025-07-15 23:01:33.107 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_words_turkish ON words(turkish_word);
+2025-07-15 23:01:33.115 BST [51596] ERROR:  relation "words" does not exist
+2025-07-15 23:01:33.115 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_words_portuguese ON words(portuguese_word);
+2025-07-15 23:01:33.123 BST [51596] ERROR:  relation "words" does not exist
+2025-07-15 23:01:33.123 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_words_difficulty ON words(difficulty_level);
+2025-07-15 23:01:33.129 BST [51596] ERROR:  relation "user_progress" does not exist
+2025-07-15 23:01:33.129 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_user_progress_user ON user_progress(user_id);
+2025-07-15 23:01:33.137 BST [51596] ERROR:  relation "user_progress" does not exist
+2025-07-15 23:01:33.137 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_user_progress_word ON user_progress(word_id);
+2025-07-15 23:01:33.145 BST [51596] ERROR:  relation "email_queue" does not exist
+2025-07-15 23:01:33.145 BST [51596] STATEMENT:  CREATE INDEX IF NOT EXISTS idx_email_queue_status ON email_queue(status);
+2025-07-15 23:01:33.153 BST [51596] ERROR:  relation "languages" does not exist at character 13
+2025-07-15 23:01:33.153 BST [51596] STATEMENT:  INSERT INTO languages (code, name, native_name) VALUES 
+	('tr', 'Turkish', 'Türkçe'),
+	('pt', 'Portuguese', 'Português')
+	ON CONFLICT (code) DO NOTHING;
+2025-07-15 23:01:33.168 BST [51596] ERROR:  relation "word_categories" does not exist at character 13
+2025-07-15 23:01:33.168 BST [51596] STATEMENT:  INSERT INTO word_categories (name, description) VALUES 
+	('Basic Vocabulary', 'Essential everyday words'),
+	('Food & Dining', 'Food, drinks, and dining related words'),
+	('Travel & Transportation', 'Transportation and travel vocabulary'),
+	('Family & Relationships', 'Family members and relationship terms'),
+	('Numbers & Time', 'Numbers, dates, and time expressions'),
+	('Colors & Descriptions', 'Colors and descriptive adjectives'),
+	('Business & Work', 'Professional and work-related vocabulary'),
+	('Health & Body', 'Health, body parts, and medical terms')
+	ON CONFLICT DO NOTHING;
+2025-07-15 23:02:06.492 BST [42560] LOG:  checkpoint starting: time
+2025-07-15 23:03:56.206 BST [42560] LOG:  checkpoint complete: wrote 1012 buffers (6.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=109.588 s, sync=0.114 s, total=109.715 s; sync files=358, longest=0.001 s, average=0.001 s; distance=4762 kB, estimate=4762 kB; lsn=0/1A82408, redo lsn=0/1A215A8
+2025-07-21 18:42:31.728 BST [37636] LOG:  background worker "logical replication launcher" (PID 25436) was terminated by exception 0xC000013A
+2025-07-21 18:42:31.728 BST [37636] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2025-07-21 18:42:31.729 BST [37636] LOG:  terminating any other active server processes
+2025-07-21 18:42:31.736 BST [37636] LOG:  received fast shutdown request
+^C2025-07-22 18:42:31.756 BST [3196] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-22 18:42:31.761 BST [3196] LOG:  listening on IPv6 address "::1", port 5432
+2025-07-22 18:42:31.761 BST [3196] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-07-22 18:42:31.835 BST [2532] LOG:  database system was interrupted; last known up at 2025-07-15 23:03:56 BST
+2025-07-22 18:42:32.709 BST [2532] LOG:  database system was not properly shut down; automatic recovery in progress
+2025-07-22 18:42:32.719 BST [2532] LOG:  redo starts at 0/1A215A8
+2025-07-22 18:42:32.808 BST [2532] LOG:  invalid record length at 0/1A824B8: expected at least 24, got 0
+2025-07-22 18:42:32.808 BST [2532] LOG:  redo done at 0/1A82480 system usage: CPU: user: 0.01 s, system: 0.04 s, elapsed: 0.08 s
+2025-07-22 18:42:32.813 BST [4732] LOG:  checkpoint starting: end-of-recovery immediate wait
+2025-07-22 18:42:32.926 BST [4732] LOG:  checkpoint complete: wrote 115 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.068 s, sync=0.037 s, total=0.114 s; sync files=85, longest=0.002 s, average=0.001 s; distance=387 kB, estimate=387 kB; lsn=0/1A824B8, redo lsn=0/1A824B8
+2025-07-22 18:42:32.965 BST [3196] LOG:  database system is ready to accept connections
+2025-07-22 18:42:39.297 BST [16576] ERROR:  character with byte sequence 0xc5 0x9f in encoding "UTF8" has no equivalent in encoding "WIN1252"
+2025-07-22 18:42:39.297 BST [16576] CONTEXT:  unnamed portal parameter $1
+2025-07-22 18:42:39.297 BST [16576] STATEMENT:  INSERT INTO words (turkish_word, portuguese_word, difficulty_level, category_id) 
+	         VALUES ($1, $2, $3, $4) 
+	         RETURNING id
+2025-07-22 18:44:56.170 BST [14840] ERROR:  syntax error at or near "password123" at character 1
+2025-07-22 18:44:56.170 BST [14840] STATEMENT:  password123
+	DROP DATABASE turkish_portuguese_db;
+2025-07-22 18:44:59.856 BST [14840] ERROR:  must be owner of database turkish_portuguese_db
+2025-07-22 18:44:59.856 BST [14840] STATEMENT:  DROP DATABASE turkish_portuguese_db;
+2025-07-22 18:45:23.020 BST [14840] ERROR:  syntax error at or near "turkish_user" at character 1
+2025-07-22 18:45:23.020 BST [14840] STATEMENT:  turkish_user
+	password123
+	DROP DATABASE turkish_portuguese_db;
+2025-07-22 18:46:23.444 BST [10728] FATAL:  role "postgres" does not exist
+2025-07-22 18:47:32.934 BST [4732] LOG:  checkpoint starting: time
+2025-07-22 18:47:36.244 BST [4732] LOG:  checkpoint complete: wrote 31 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.296 s, sync=0.005 s, total=3.311 s; sync files=19, longest=0.001 s, average=0.001 s; distance=3 kB, estimate=349 kB; lsn=0/1A83198, redo lsn=0/1A83108
+2025-07-22 18:47:51.979 BST [17232] ERROR:  must be owner of database turkish_portuguese_db
+2025-07-22 18:47:51.979 BST [17232] STATEMENT:  DROP DATABASE turkish_portuguese_db;
+2025-07-22 18:48:04.247 BST [17232] ERROR:  permission denied to create database
+2025-07-22 18:48:04.247 BST [17232] STATEMENT:  CREATE DATABASE turkish_portuguese_utf8     WITH OWNER = turkish_user     ENCODING = 'UTF8'     TEMPLATE = template0;
+2025-07-22 18:49:52.607 BST [3196] LOG:  received fast shutdown request
+2025-07-22 18:49:52.610 BST [3196] LOG:  aborting any active transactions
+2025-07-22 18:49:52.622 BST [3196] LOG:  background worker "logical replication launcher" (PID 6428) exited with exit code 1
+2025-07-22 18:49:52.622 BST [4732] LOG:  shutting down
+2025-07-22 18:49:52.623 BST [4732] LOG:  checkpoint starting: shutdown immediate
+2025-07-22 18:49:52.632 BST [4732] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.010 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=314 kB; lsn=0/1A83248, redo lsn=0/1A83248
+2025-07-22 18:49:52.648 BST [3196] LOG:  database system is shut down
+2025-07-22 18:50:56.982 BST [10952] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-22 18:50:56.987 BST [10952] LOG:  listening on IPv6 address "::1", port 5432
+2025-07-22 18:50:56.987 BST [10952] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-07-22 18:50:57.053 BST [6348] LOG:  database system was shut down at 2025-07-22 18:50:13 BST
+2025-07-22 18:50:57.086 BST [10952] LOG:  database system is ready to accept connections
+2025-07-22 18:55:57.047 BST [17140] LOG:  checkpoint starting: time
+2025-07-22 18:57:53.383 BST [17140] LOG:  checkpoint complete: wrote 1057 buffers (6.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=116.081 s, sync=0.243 s, total=116.336 s; sync files=357, longest=0.025 s, average=0.001 s; distance=5118 kB, estimate=5118 kB; lsn=0/1A7A6F0, redo lsn=0/1A7A660
+2025-07-22 18:58:19.974 BST [10952] LOG:  background worker "logical replication launcher" (PID 17048) was terminated by exception 0xC000013A
+2025-07-22 18:58:19.974 BST [10952] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2025-07-22 18:58:19.974 BST [10952] LOG:  terminating any other active server processes
+2025-07-22 18:58:19.983 BST [10952] LOG:  received fast shutdown request
+^C2025-07-22 19:26:36.642 BST [7472] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-22 19:26:36.650 BST [7472] LOG:  listening on IPv6 address "::1", port 5432
+2025-07-22 19:26:36.650 BST [7472] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-07-22 19:26:36.729 BST [15536] LOG:  database system was interrupted; last known up at 2025-07-22 18:57:53 BST
+2025-07-22 19:26:37.011 BST [15536] LOG:  database system was not properly shut down; automatic recovery in progress
+2025-07-22 19:26:37.019 BST [15536] LOG:  redo starts at 0/1A7A660
+2025-07-22 19:26:37.019 BST [15536] LOG:  invalid record length at 0/1A7A7A0: expected at least 24, got 0
+2025-07-22 19:26:37.019 BST [15536] LOG:  redo done at 0/1A7A768 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2025-07-22 19:26:37.027 BST [5360] LOG:  checkpoint starting: end-of-recovery immediate wait
+2025-07-22 19:26:37.041 BST [5360] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.003 s, total=0.015 s; sync files=2, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=0 kB; lsn=0/1A7A7A0, redo lsn=0/1A7A7A0
+2025-07-22 19:26:37.070 BST [7472] LOG:  database system is ready to accept connections
+2025-07-22 19:30:01.081 BST [10012] FATAL:  role "jpdib" does not exist
+2025-07-22 19:35:00.332 BST [15728] FATAL:  role "jpdib" does not exist
+2025-07-22 19:35:49.542 BST [17180] ERROR:  canceling statement due to user request
+2025-07-22 19:35:49.543 BST [7472] LOG:  received fast shutdown request
+2025-07-22 19:35:49.546 BST [7472] LOG:  aborting any active transactions
+2025-07-22 19:35:49.562 BST [7472] LOG:  background worker "logical replication launcher" (PID 17180) exited with exit code 1
+2025-07-22 19:35:49.577 BST [5360] LOG:  shutting down
+2025-07-22 19:35:49.579 BST [5360] LOG:  checkpoint starting: shutdown immediate
+2025-07-22 19:35:49.597 BST [5360] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.006 s, total=0.020 s; sync files=3, longest=0.004 s, average=0.002 s; distance=0 kB, estimate=0 kB; lsn=0/1A7A850, redo lsn=0/1A7A850
+2025-07-22 19:35:49.619 BST [7472] LOG:  database system is shut down
+2025-07-22 20:02:38.588 BST [17580] LOG:  starting PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.29.30158, 64-bit
+2025-07-22 20:02:38.594 BST [17580] LOG:  listening on IPv6 address "::1", port 5432
+2025-07-22 20:02:38.595 BST [17580] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-07-22 20:02:38.666 BST [6412] LOG:  database system was shut down at 2025-07-22 19:35:49 BST
+2025-07-22 20:02:38.701 BST [17580] LOG:  database system is ready to accept connections
+2025-07-22 20:02:48.424 BST [17488] ERROR:  column "language_id" does not exist at character 28
+2025-07-22 20:02:48.424 BST [17488] STATEMENT:  SELECT id FROM words WHERE language_id = $1 AND (turkish_word = $2 OR english_word = $2 OR portuguese_word = $2)
+2025-07-22 20:04:16.943 BST [16572] ERROR:  column "english_word" does not exist at character 71
+2025-07-22 20:04:16.943 BST [16572] STATEMENT:  SELECT id FROM words WHERE language_id = $1 AND (turkish_word = $2 OR english_word = $2 OR portuguese_word = $2)
+2025-07-22 20:06:02.449 BST [8084] ERROR:  null value in column "portuguese_word" of relation "words" violates not-null constraint
+2025-07-22 20:06:02.449 BST [8084] DETAIL:  Failing row contains (168, elma, null, null, null, 1, null, null, 2025-07-22 20:06:02.448132, 2025-07-22 20:06:02.448132, 1, null).
+2025-07-22 20:06:02.449 BST [8084] STATEMENT:  INSERT INTO words (turkish_word, language_id, difficulty_level) VALUES ($1, $2, $3) RETURNING id
+2025-07-22 20:07:07.275 BST [17928] ERROR:  null value in column "portuguese_example" of relation "word_examples" violates not-null constraint
+2025-07-22 20:07:07.275 BST [17928] DETAIL:  Failing row contains (168, 169, Ben bir elma yiyorum., null, 2025-07-22 20:07:07.274451, null).
+2025-07-22 20:07:07.275 BST [17928] STATEMENT:  INSERT INTO word_examples (word_id, turkish_example) VALUES ($1, $2) ON CONFLICT DO NOTHING
+2025-07-22 20:07:38.657 BST [17428] LOG:  checkpoint starting: time
+2025-07-22 20:07:44.945 BST [17428] LOG:  checkpoint complete: wrote 60 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.256 s, sync=0.023 s, total=6.289 s; sync files=50, longest=0.011 s, average=0.001 s; distance=234 kB, estimate=234 kB; lsn=0/1AB51C8, redo lsn=0/1AB5170
+2025-07-22 20:12:38.963 BST [17428] LOG:  checkpoint starting: time
+2025-07-22 20:12:43.800 BST [17428] LOG:  checkpoint complete: wrote 45 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.811 s, sync=0.016 s, total=4.837 s; sync files=30, longest=0.004 s, average=0.001 s; distance=347 kB, estimate=347 kB; lsn=0/1B0BFB8, redo lsn=0/1B0BF60
+2025-07-22 20:15:00.578 BST [8120] FATAL:  role "jpdib" does not exist
+2025-07-22 20:15:32.425 BST [11728] ERROR:  canceling statement due to user request
+2025-07-22 20:15:32.430 BST [17580] LOG:  background worker "logical replication launcher" (PID 11728) was terminated by exception 0xC000013A
+2025-07-22 20:15:32.430 BST [17580] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2025-07-22 20:15:32.431 BST [17580] LOG:  terminating any other active server processes
+2025-07-22 20:15:32.440 BST [17580] LOG:  received fast shutdown request
+^C

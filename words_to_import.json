@@ -1,0 +1,302 @@
+[
+    {
+      "tr": { "word": "elma", "example": "Ben bir elma yiyorum." },
+      "en": { "word": "apple", "example": "I am eating an apple." },
+      "pt": { "word": "maçã", "example": "Eu estou comendo uma maçã." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "kitap", "example": "Bu kitap çok ilginç." },
+      "en": { "word": "book", "example": "This book is very interesting." },
+      "pt": { "word": "livro", "example": "Este livro é muito interessante." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "araba", "example": "Yeni bir araba aldım." },
+      "en": { "word": "car", "example": "I bought a new car." },
+      "pt": { "word": "carro", "example": "Eu comprei um carro novo." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "ev", "example": "Evim şehir merkezinde." },
+      "en": { "word": "house", "example": "My house is in the city center." },
+      "pt": { "word": "casa", "example": "Minha casa fica no centro da cidade." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "su", "example": "Bir bardak su içtim." },
+      "en": { "word": "water", "example": "I drank a glass of water." },
+      "pt": { "word": "água", "example": "Eu bebi um copo de água." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "kedi", "example": "Kedim koltukta uyuyor." },
+      "en": { "word": "cat", "example": "My cat is sleeping on the couch." },
+      "pt": { "word": "gato", "example": "Meu gato está dormindo no sofá." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "köpek", "example": "Köpeğim bahçede oynuyor." },
+      "en": { "word": "dog", "example": "My dog is playing in the garden." },
+      "pt": { "word": "cão", "example": "Meu cão está brincando no jardim." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "aile", "example": "Ailemle vakit geçirmeyi seviyorum." },
+      "en": { "word": "family", "example": "I love spending time with my family." },
+      "pt": { "word": "família", "example": "Eu amo passar tempo com minha família." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "arkadaş", "example": "Arkadaşımla sinemaya gittim." },
+      "en": { "word": "friend", "example": "I went to the cinema with my friend." },
+      "pt": { "word": "amigo", "example": "Eu fui ao cinema com meu amigo." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "okul", "example": "Okul yarın açılıyor." },
+      "en": { "word": "school", "example": "School opens tomorrow." },
+      "pt": { "word": "escola", "example": "A escola abre amanhã." },
+      "difficulty": 1
+    },
+    {
+      "tr": { "word": "zaman", "example": "Zaman çok hızlı geçiyor." },
+      "en": { "word": "time", "example": "Time passes very quickly." },
+      "pt": { "word": "tempo", "example": "O tempo passa muito rápido." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "yemek", "example": "Akşam yemeği hazırlıyorum." },
+      "en": { "word": "food", "example": "I am preparing dinner." },
+      "pt": { "word": "comida", "example": "Estou preparando o jantar." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "çalışmak", "example": "Her gün ofiste çalışıyorum." },
+      "en": { "word": "work", "example": "I work in the office every day." },
+      "pt": { "word": "trabalhar", "example": "Eu trabalho no escritório todos os dias." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "para", "example": "Bu ay çok para harcadım." },
+      "en": { "word": "money", "example": "I spent a lot of money this month." },
+      "pt": { "word": "dinheiro", "example": "Eu gastei muito dinheiro este mês." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "güneş", "example": "Güneş bugün çok parlak." },
+      "en": { "word": "sun", "example": "The sun is very bright today." },
+      "pt": { "word": "sol", "example": "O sol está muito brilhante hoje." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "hava", "example": "Hava bugün çok güzel." },
+      "en": { "word": "weather", "example": "The weather is very nice today." },
+      "pt": { "word": "tempo", "example": "O tempo está muito bom hoje." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "uyumak", "example": "Erken uyumayı tercih ederim." },
+      "en": { "word": "sleep", "example": "I prefer to sleep early." },
+      "pt": { "word": "dormir", "example": "Eu prefiro dormir cedo." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "mutlu", "example": "Bugün çok mutlu hissediyorum." },
+      "en": { "word": "happy", "example": "I feel very happy today." },
+      "pt": { "word": "feliz", "example": "Eu me sinto muito feliz hoje." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "müzik", "example": "Müzik dinlemeyi severim." },
+      "en": { "word": "music", "example": "I love listening to music." },
+      "pt": { "word": "música", "example": "Eu amo ouvir música." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "yol", "example": "Bu yol köye gider." },
+      "en": { "word": "road", "example": "This road leads to the village." },
+      "pt": { "word": "estrada", "example": "Esta estrada leva à vila." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "kırmızı", "example": "Kırmızı bir elbise giydim." },
+      "en": { "word": "red", "example": "I wore a red dress." },
+      "pt": { "word": "vermelho", "example": "Eu usei um vestido vermelho." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "bahçe", "example": "Bahçede çiçekler yetiştiriyorum." },
+      "en": { "word": "garden", "example": "I grow flowers in the garden." },
+      "pt": { "word": "jardim", "example": "Eu cultivo flores no jardim." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "kapı", "example": "Kapıyı açık bıraktım." },
+      "en": { "word": "door", "example": "I left the door open." },
+      "pt": { "word": "porta", "example": "Eu deixei a porta aberta." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "pencere", "example": "Pencereyi açtım, hava serin." },
+      "en": { "word": "window", "example": "I opened the window; the air is cool." },
+      "pt": { "word": "janela", "example": "Eu abri a janela; o ar está fresco." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "masa", "example": "Masanın üzerinde bir vazo var." },
+      "en": { "word": "table", "example": "There is a vase on the table." },
+      "pt": { "word": "mesa", "example": "Há um vaso na mesa." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "sandalye", "example": "Sandalye çok rahat." },
+      "en": { "word": "chair", "example": "The chair is very comfortable." },
+      "pt": { "word": "cadeira", "example": "A cadeira é muito confortável." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "saat", "example": "Saat beş oldu." },
+      "en": { "word": "hour", "example": "It’s five o’clock." },
+      "pt": { "word": "hora", "example": "São cinco horas." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "kalem", "example": "Kalemim masanın üzerinde." },
+      "en": { "word": "pen", "example": "My pen is on the table." },
+      "pt": { "word": "caneta", "example": "Minha caneta está na mesa." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "kâğıt", "example": "Bir kâğıda not yazdım." },
+      "en": { "word": "paper", "example": "I wrote a note on a paper." },
+      "pt": { "word": "papel", "example": "Eu escrevi uma nota em um papel." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "telefon", "example": "Telefonum çalıyor." },
+      "en": { "word": "phone", "example": "My phone is ringing." },
+      "pt": { "word": "telefone", "example": "Meu telefone está tocando." },
+      "difficulty": 2
+    },
+    {
+      "tr": { "word": "televizyon", "example": "Televizyonda haber izliyorum." },
+      "en": { "word": "television", "example": "I’m watching news on television." },
+      "pt": { "word": "televisão", "example": "Estou assistindo notícias na televisão." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "bilgisayar", "example": "Bilgisayarda oyun oynuyorum." },
+      "en": { "word": "computer", "example": "I’m playing a game on the computer." },
+      "pt": { "word": "computador", "example": "Estou jogando um jogo no computador." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "sokak", "example": "Sokakta çocuklar oynuyor." },
+      "en": { "word": "street", "example": "Children are playing in the street." },
+      "pt": { "word": "rua", "example": "Crianças estão brincando na rua." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "market", "example": "Marketten meyve aldım." },
+      "en": { "word": "market", "example": "I bought fruit from the market." },
+      "pt": { "word": "mercado", "example": "Eu comprei frutas no mercado." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "otobüs", "example": "Otobüsle işe gidiyorum." },
+      "en": { "word": "bus", "example": "I go to work by bus." },
+      "pt": { "word": "ônibus", "example": "Eu vou para o trabalho de ônibus." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "tren", "example": "Trenle seyahat etmeyi seviyorum." },
+      "en": { "word": "train", "example": "I love traveling by train." },
+      "pt": { "word": "trem", "example": "Eu amo viajar de trem." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "uçak", "example": "Uçakla tatil için Paris’e gidiyorum." },
+      "en": { "word": "airplane", "example": "I’m going to Paris for vacation by airplane." },
+      "pt": { "word": "avião", "example": "Eu vou para Paris de férias de avião." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "tatil", "example": "Yaz tatilinde denize gittim." },
+      "en": { "word": "vacation", "example": "I went to the sea during summer vacation." },
+      "pt": { "word": "férias", "example": "Eu fui para o mar durante as férias de verão." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "deniz", "example": "Denizde yüzmeyi seviyorum." },
+      "en": { "word": "sea", "example": "I love swimming in the sea." },
+      "pt": { "word": "mar", "example": "Eu amo nadar no mar." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "dağ", "example": "Dağda yürüyüş yaptık." },
+      "en": { "word": "mountain", "example": "We hiked in the mountain." },
+      "pt": { "word": "montanha", "example": "Nós fizemos uma caminhada na montanha." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "orman", "example": "Ormanda kamp yaptık." },
+      "en": { "word": "forest", "example": "We camped in the forest." },
+      "pt": { "word": "floresta", "example": "Nós acampamos na floresta." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "göl", "example": "Göldeki balıkları izledim." },
+      "en": { "word": "lake", "example": "I watched the fish in the lake." },
+      "pt": { "word": "lago", "example": "Eu observei os peixes no lago." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "nehir", "example": "Nehirde kano yaptık." },
+      "en": { "word": "river", "example": "We canoed on the river." },
+      "pt": { "word": "rio", "example": "Nós fizemos canoagem no rio." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "bisiklet", "example": "Bisikletle parka gittim." },
+      "en": { "word": "bicycle", "example": "I went to the park by bicycle." },
+      "pt": { "word": "bicicleta", "example": "Eu fui ao parque de bicicleta." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "futbol", "example": "Futbol maçı izledim." },
+      "en": { "word": "soccer", "example": "I watched a soccer match." },
+      "pt": { "word": "futebol", "example": "Eu assisti a um jogo de futebol." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "basketbol", "example": "Basketbol oynamayı seviyorum." },
+      "en": { "word": "basketball", "example": "I love playing basketball." },
+      "pt": { "word": "basquete", "example": "Eu amo jogar basquete." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "sinema", "example": "Sinema için bilet aldım." },
+      "en": { "word": "cinema", "example": "I bought a ticket for the cinema." },
+      "pt": { "word": "cinema", "example": "Eu comprei um ingresso para o cinema." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "konuşmak", "example": "Arkadaşlarımla konuşmayı seviyorum." },
+      "en": { "word": "talk", "example": "I love talking with my friends." },
+      "pt": { "word": "falar", "example": "Eu amo conversar com meus amigos." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "öğrenmek", "example": "Yeni bir dil öğrenmek istiyorum." },
+      "en": { "word": "learn", "example": "I want to learn a new language." },
+      "pt": { "word": "aprender", "example": "Quero aprender uma nova língua." },
+      "difficulty": 3
+    },
+    {
+      "tr": { "word": "seyahat", "example": "Seyahat etmeyi hayal ediyorum." },
+      "en": { "word": "travel", "example": "I dream of traveling." },
+      "pt": { "word": "viajar", "example": "Eu sonho em viajar." },
+      "difficulty": 3
+    }
+  ]
