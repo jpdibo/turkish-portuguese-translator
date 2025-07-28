@@ -1,35 +1,30 @@
 const sgMail = require('@sendgrid/mail');
-const crypto = require('crypto');
-const { Pool } = require('pg');
+const { getDatabase } = require('../database');
 
 // Initialize SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-
 class EmailService {
   constructor() {
-    this.fromEmail = process.env.EMAIL_FROM || 'noreply@yourdomain.com';
-    this.fromName = process.env.EMAIL_FROM_NAME || 'Language Learning Platform';
+    this.fromEmail = process.env.EMAIL_FROM || 'noreply@turkishportuguese.com';
+    this.fromName = process.env.EMAIL_FROM_NAME || 'Turkish Portuguese Translator';
   }
 
-  async sendDailyEmail(userId, wordSetId) {
+  async sendDailyEmail(userId) {
     try {
-      console.log(`Sending daily email to user ${userId} for word set ${wordSetId}`);
+      console.log(`Sending daily email to user ${userId}`);
       
-      // Get user and word set data
+      // Get user data
       const user = await this.getUser(userId);
-      const wordSet = await this.getWordSet(wordSetId);
-      
-      if (!user || !wordSet) {
-        throw new Error('User or word set not found');
+      if (!user) {
+        throw new Error('User not found');
       }
+
+      // Get random words for the day
+      const words = await this.getDailyWords(user.words_per_day || 5);
       
       // Generate email content
-      const emailContent = this.generateEmailContent(user, wordSet);
+      const emailContent = this.generateEmailContent(user, words);
       
       // Send email
       const msg = {
@@ -38,87 +33,54 @@ class EmailService {
           email: this.fromEmail,
           name: this.fromName
         },
-        subject: `Your Daily ${wordSet.target_language} Words - ${new Date().toLocaleDateString()}`,
+        subject: `Your Daily Turkish-Portuguese Words - ${new Date().toLocaleDateString()}`,
         html: emailContent.html,
-        text: emailContent.text,
-        trackingSettings: {
-          clickTracking: {
-            enable: true,
-            enableText: true
-          },
-          openTracking: {
-            enable: true
-          }
-        }
+        text: emailContent.text
       };
       
       await sgMail.send(msg);
-      
-      // Update email queue status
-      await this.updateEmailQueueStatus(wordSetId, 'sent');
-      
       console.log(`Email sent successfully to ${user.email}`);
       
-      return { success: true, messageId: 'sent' };
+      return { success: true };
       
     } catch (error) {
       console.error('Email sending failed:', error);
-      await this.updateEmailQueueStatus(wordSetId, 'failed', error.message);
       throw error;
     }
   }
   
   async getUser(userId) {
-    const query = `
-      SELECT u.id, u.email, u.first_name, u.last_name, up.words_per_day
-      FROM users u
-      LEFT JOIN user_preferences up ON u.id = up.user_id
-      WHERE u.id = $1 AND u.is_active = true
-    `;
-    
-    const result = await pool.query(query, [userId]);
-    return result.rows[0];
+    const db = await getDatabase();
+    return new Promise((resolve, reject) => {
+      db.get(
+        'SELECT u.id, u.email, u.name, up.words_per_day FROM users u LEFT JOIN user_preferences up ON u.id = up.user_id WHERE u.id = ?',
+        [userId],
+        (err, user) => {
+          if (err) reject(err);
+          else resolve(user);
+        }
+      );
+    });
   }
   
-  async getWordSet(wordSetId) {
-    const query = `
-      SELECT 
-        dws.id,
-        dws.date,
-        sl.name as source_language,
-        tl.name as target_language,
-        dl.name as difficulty_level,
-        json_agg(
-          json_build_object(
-            'source_word', w1.word,
-            'target_word', w2.word,
-            'source_example', es1.sentence,
-            'target_example', es2.sentence,
-            'difficulty', dl.name
-          )
-        ) as words
-      FROM daily_word_sets dws
-      JOIN languages sl ON dws.source_language_id = sl.id
-      JOIN languages tl ON dws.target_language_id = tl.id
-      JOIN difficulty_levels dl ON dws.difficulty_level_id = dl.id
-      JOIN word_set_items wsi ON dws.id = wsi.daily_word_set_id
-      JOIN translations t ON wsi.translation_id = t.id
-      JOIN words w1 ON t.source_word_id = w1.id
-      JOIN words w2 ON t.target_word_id = w2.id
-      LEFT JOIN example_sentences es1 ON w1.id = es1.word_id
-      LEFT JOIN example_sentences es2 ON w2.id = es2.word_id
-      WHERE dws.id = $1
-      GROUP BY dws.id, dws.date, sl.name, tl.name, dl.name
-    `;
-    
-    const result = await pool.query(query, [wordSetId]);
-    return result.rows[0];
+  async getDailyWords(count = 5) {
+    const db = await getDatabase();
+    return new Promise((resolve, reject) => {
+      db.all(
+        'SELECT w.turkish_word, w.portuguese_word, w.english_word, e.turkish_example, e.portuguese_example, w.difficulty_level FROM words w LEFT JOIN word_examples e ON w.id = e.word_id ORDER BY RANDOM() LIMIT ?',
+        [count],
+        (err, words) => {
+          if (err) reject(err);
+          else resolve(words);
+        }
+      );
+    });
   }
   
-  generateEmailContent(user, wordSet) {
-    const userName = user.first_name || 'there';
-    const wordCount = wordSet.words.length;
-    const date = new Date(wordSet.date).toLocaleDateString('en-US', {
+  generateEmailContent(user, words) {
+    const userName = user.name || 'there';
+    const wordCount = words.length;
+    const date = new Date().toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -131,7 +93,7 @@ class EmailService {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Your Daily ${wordSet.target_language} Words</title>
+          <title>Your Daily Turkish-Portuguese Words</title>
           <style>
             body {
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -231,9 +193,9 @@ class EmailService {
               text-transform: uppercase;
               margin-top: 8px;
             }
-            .difficulty-beginner { background-color: #c6f6d5; color: #22543d; }
-            .difficulty-intermediate { background-color: #fef5e7; color: #744210; }
-            .difficulty-advanced { background-color: #fed7d7; color: #742a2a; }
+            .difficulty-1 { background-color: #c6f6d5; color: #22543d; }
+            .difficulty-2 { background-color: #fef5e7; color: #744210; }
+            .difficulty-3 { background-color: #fed7d7; color: #742a2a; }
             .cta-section {
               background-color: #f7fafc;
               padding: 30px;
@@ -269,11 +231,6 @@ class EmailService {
             .footer a:hover {
               text-decoration: underline;
             }
-            .unsubscribe {
-              margin-top: 20px;
-              padding-top: 20px;
-              border-top: 1px solid #4a5568;
-            }
             @media (max-width: 600px) {
               .header { padding: 30px 20px; }
               .content { padding: 30px 20px; }
@@ -285,47 +242,47 @@ class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🌍 Your Daily ${wordSet.target_language} Words</h1>
+              <h1>🇹🇷 Your Daily Turkish-Portuguese Words 🇵🇹</h1>
               <p>${date} • ${wordCount} new words to learn</p>
             </div>
             
             <div class="content">
               <div class="greeting">
                 Hello ${userName}! 👋<br>
-                Here are your daily ${wordSet.target_language} words to expand your vocabulary:
+                Here are your daily Turkish-Portuguese words to expand your vocabulary:
               </div>
               
-              ${wordSet.words.map(word => `
+              ${words.map(word => `
                 <div class="word-card">
                   <div class="word-pair">
-                    <div class="source-word">${word.source_word}</div>
+                    <div class="source-word">${word.turkish_word}</div>
                     <div class="arrow">→</div>
-                    <div class="target-word">${word.target_word}</div>
+                    <div class="target-word">${word.portuguese_word}</div>
                   </div>
                   
-                  ${word.source_example ? `
+                  ${word.turkish_example ? `
                     <div class="example">
-                      <div class="example-label">Example (${wordSet.source_language})</div>
-                      <p class="example-text">${word.source_example}</p>
+                      <div class="example-label">Example (Turkish)</div>
+                      <p class="example-text">${word.turkish_example}</p>
                     </div>
                   ` : ''}
                   
-                  ${word.target_example ? `
+                  ${word.portuguese_example ? `
                     <div class="example">
-                      <div class="example-label">Exemplo (${wordSet.target_language})</div>
-                      <p class="example-text">${word.target_example}</p>
+                      <div class="example-label">Exemplo (Portuguese)</div>
+                      <p class="example-text">${word.portuguese_example}</p>
                     </div>
                   ` : ''}
                   
-                  <div class="difficulty-badge difficulty-${word.difficulty}">
-                    ${word.difficulty}
+                  <div class="difficulty-badge difficulty-${word.difficulty_level}">
+                    Level ${word.difficulty_level}
                   </div>
                 </div>
               `).join('')}
               
               <div class="cta-section">
                 <h3 style="margin: 0 0 20px 0; color: #2d3748;">Ready to practice?</h3>
-                <a href="${process.env.FRONTEND_URL}/words" class="cta-button">
+                <a href="${process.env.FRONTEND_URL || 'https://turkish-portuguese-translator.vercel.app'}" class="cta-button">
                   Practice These Words Online →
                 </a>
               </div>
@@ -334,11 +291,6 @@ class EmailService {
             <div class="footer">
               <p>Keep learning and expanding your language skills! 🚀</p>
               <p>This email was sent to ${user.email}</p>
-              <div class="unsubscribe">
-                <a href="${process.env.FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(user.email)}&token=${this.generateUnsubscribeToken(user.email)}">
-                  Unsubscribe from daily emails
-                </a>
-              </div>
             </div>
           </div>
         </body>
@@ -346,105 +298,62 @@ class EmailService {
     `;
     
     const text = `
-Your Daily ${wordSet.target_language} Words - ${date}
+Your Daily Turkish-Portuguese Words - ${date}
 
 Hello ${userName}!
 
-Here are your daily ${wordSet.target_language} words to expand your vocabulary:
+Here are your daily Turkish-Portuguese words to expand your vocabulary:
 
-${wordSet.words.map((word, index) => `
-${index + 1}. ${word.source_word} → ${word.target_word} (${word.difficulty})
-${word.source_example ? `   Example: ${word.source_example}` : ''}
-${word.target_example ? `   Exemplo: ${word.target_example}` : ''}
+${words.map((word, index) => `
+${index + 1}. ${word.turkish_word} → ${word.portuguese_word} (Level ${word.difficulty_level})
+${word.turkish_example ? `   Example: ${word.turkish_example}` : ''}
+${word.portuguese_example ? `   Exemplo: ${word.portuguese_example}` : ''}
 `).join('\n')}
 
-Practice these words online: ${process.env.FRONTEND_URL}/words
+Practice these words online: ${process.env.FRONTEND_URL || 'https://turkish-portuguese-translator.vercel.app'}
 
 Keep learning and expanding your language skills!
-
----
-Unsubscribe: ${process.env.FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(user.email)}&token=${this.generateUnsubscribeToken(user.email)}
     `;
     
     return { html, text };
-  }
-  
-  generateUnsubscribeToken(email) {
-    const secret = process.env.JWT_SECRET || 'fallback-secret';
-    return crypto.createHmac('sha256', secret).update(email).digest('hex');
-  }
-  
-  async updateEmailQueueStatus(wordSetId, status, errorMessage = null) {
-    const query = `
-      UPDATE email_queue 
-      SET status = $1, sent_at = CASE WHEN $1 = 'sent' THEN CURRENT_TIMESTAMP ELSE sent_at END, 
-          error_message = $2, retry_count = CASE WHEN $1 = 'failed' THEN retry_count + 1 ELSE retry_count END
-      WHERE daily_word_set_id = $3
-    `;
-    
-    await pool.query(query, [status, errorMessage, wordSetId]);
   }
   
   async processEmailQueue() {
     console.log('Processing email queue...');
     
     try {
-      const query = `
-        SELECT eq.id, eq.user_id, eq.daily_word_set_id, eq.retry_count
-        FROM email_queue eq
-        WHERE eq.status = 'pending' 
-        AND eq.retry_count < 3
-        ORDER BY eq.created_at ASC
-        LIMIT 50
-      `;
+      const db = await getDatabase();
       
-      const result = await pool.query(query);
-      const pendingEmails = result.rows;
-      
-      console.log(`Found ${pendingEmails.length} pending emails`);
-      
-      for (const email of pendingEmails) {
-        try {
-          await this.sendDailyEmail(email.user_id, email.daily_word_set_id);
+      // Get users subscribed to emails
+      db.all(
+        'SELECT u.id, u.email, u.name FROM users u JOIN user_preferences up ON u.id = up.user_id WHERE up.is_email_subscribed = 1',
+        async (err, users) => {
+          if (err) {
+            console.error('Error getting users:', err);
+            return;
+          }
           
-          // Add delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log(`Found ${users.length} users subscribed to emails`);
           
-        } catch (error) {
-          console.error(`Failed to send email ${email.id}:`, error.message);
+          for (const user of users) {
+            try {
+              await this.sendDailyEmail(user.id);
+              
+              // Add delay to avoid rate limiting
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              
+            } catch (error) {
+              console.error(`Failed to send email to ${user.email}:`, error.message);
+            }
+          }
           
-          // Update retry count
-          await this.updateEmailQueueStatus(
-            email.daily_word_set_id, 
-            email.retry_count >= 2 ? 'failed' : 'pending',
-            error.message
-          );
+          console.log(`Processed ${users.length} emails`);
         }
-      }
-      
-      console.log(`Processed ${pendingEmails.length} emails`);
+      );
       
     } catch (error) {
       console.error('Email queue processing failed:', error);
     }
-  }
-  
-  async unsubscribeUser(email, token) {
-    // Verify unsubscribe token
-    const expectedToken = this.generateUnsubscribeToken(email);
-    if (token !== expectedToken) {
-      throw new Error('Invalid unsubscribe token');
-    }
-    
-    // Update user preferences
-    const query = `
-      UPDATE user_preferences 
-      SET is_email_subscribed = false 
-      WHERE user_id = (SELECT id FROM users WHERE email = $1)
-    `;
-    
-    const result = await pool.query(query, [email]);
-    return result.rowCount > 0;
   }
 }
 
